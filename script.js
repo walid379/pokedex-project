@@ -1,14 +1,19 @@
 const button = document.getElementById("button")
 const input = document.getElementById("input")
 const nom = document.getElementById("nom")
-const image = document.getElementById("img")
+const sprite_front_default = document.getElementById("img")
 const nom2 = document.getElementById("nom2")
-const image2 = document.getElementById("img2")
+const sprite_front_popup_default = document.getElementById("img_popup1")
+const sprite_back_popup_default = document.getElementById("img_popup2")
+const sprite_front_popup_shiny = document.getElementById("img_popup3")
+const sprite_back_popup_shiny = document.getElementById("img_popup4")
 const popup = document.getElementById("popup")
 const close = document.getElementById("close")
+const talent = document.getElementById("talent")
 const poids = document.getElementById("poids")
 const taille = document.getElementById("taille")
-const types = document.getElementById("type1")
+const types1 = document.getElementById("type1")
+const types2 = document.getElementById("type2")
 let api
 
 button.addEventListener("click", async function(){
@@ -21,11 +26,26 @@ button.addEventListener("click", async function(){
     }else{
         nom.textContent = poke
         nom2.textContent = poke
-        const sprite_front = await getImage()
-        image.src = sprite_front
-        image2.src = sprite_front
-        document.body.setAttribute("src", image)
-        document.body.setAttribute("src", image2)
+
+        const sprite_front = await getFrontSpriteDefault()
+        sprite_front_default.src = sprite_front
+        document.body.setAttribute("src", sprite_front_default)
+        
+        sprite_front_popup_default.src = sprite_front
+        document.body.setAttribute("src", sprite_front_popup_default)
+
+        const back_sprite_default = await getBackSpriteDefault()
+        sprite_back_popup_default.src = back_sprite_default
+        document.body.setAttribute("src", sprite_back_popup_default)
+
+        const front_sprite_shiny = await getFrontSpriteShiny()
+        sprite_front_popup_shiny.src = front_sprite_shiny
+        document.body.setAttribute("src", sprite_front_popup_shiny)
+
+        const back_sprite_shiny = await getBackSpriteShiny()
+        sprite_back_popup_shiny.src = back_sprite_shiny
+        document.body.setAttribute("src", sprite_back_popup_shiny)
+
 
         const poid = await getWeight()
         poids.textContent = poid/10 + " kg"
@@ -33,13 +53,28 @@ button.addEventListener("click", async function(){
         const hauteur = await getHeight()
         taille.textContent = hauteur*10 + " cm"
 
-        const type = await getType()
-        types.src = type
-        document.body.setAttribute("src", types)
+        const ability = await getAbility()
+        console.log(ability)
+        talent.textContent = ability
+
+        const type1 = await getType1()
+        types1.src = type1
+        document.body.setAttribute("src", types1)
+
+        const type2 = await getType2()
+        if(type2){
+            types2.src = type2
+            document.body.setAttribute("src", types2)
+            types2.style.display = "block"
+        }
+        else{
+            types2.src = ""
+            types2.style.display = "none"
+        }
     }
 })
 
-image.addEventListener("click", function(){
+sprite_front_default.addEventListener("click", function(){
     popup.style.display = "flex"
 })
 
@@ -66,7 +101,7 @@ async function getName(){
     }
 }
 
-async function getImage(){
+async function getFrontSpriteDefault(){
     try{
         const response = await fetch(api)
         if (!response.ok) {
@@ -74,6 +109,45 @@ async function getImage(){
         }
         const data = await response.json()
         return data.sprites.front_default
+    }catch(error){
+        console.error('Erreur', error)
+    }
+}
+
+async function getBackSpriteDefault(){
+    try{
+        const response = await fetch(api)
+        if (!response.ok) {
+            throw new Error('Erreur HTTP' + response.status)
+        }
+        const data = await response.json()
+        return data.sprites.back_default
+    }catch(error){
+        console.error('Erreur', error)
+    }
+}
+
+async function getFrontSpriteShiny(){
+    try{
+        const response = await fetch(api)
+        if (!response.ok) {
+            throw new Error('Erreur HTTP' + response.status)
+        }
+        const data = await response.json()
+        return data.sprites.front_shiny
+    }catch(error){
+        console.error('Erreur', error)
+    }
+}
+
+async function getBackSpriteShiny(){
+    try{
+        const response = await fetch(api)
+        if (!response.ok) {
+            throw new Error('Erreur HTTP' + response.status)
+        }
+        const data = await response.json()
+        return data.sprites.back_shiny
     }catch(error){
         console.error('Erreur', error)
     }
@@ -105,16 +179,51 @@ async function getHeight(){
     }
 }
 
-async function getType(){
+async function getType1(){
     try{
         const response = await fetch(api)
         if (!response.ok) {
             throw new Error('Erreur HTTP' + response.status)
         }
         const data = await response.json()
-        const firstType = data.types[0].type.name;
+        const firstType = data.types[0].type.name
+        console.log(firstType)
         const iconPath = `./src/types/${firstType}.png`
         return iconPath
+    }catch(error){
+        console.error('Erreur', error)
+    }
+}
+
+async function getType2(){
+    try{
+        const response = await fetch(api)
+        if (!response.ok) {
+            throw new Error('Erreur HTTP' + response.status)
+        }
+        const data = await response.json()
+
+        if (data.types.length > 1) {
+            const secondType = data.types[1].type.name
+            console.log(secondType)
+            return `./src/types/${secondType}.png`
+        }else{
+            return null
+        }
+    }catch(error){
+        console.error('Erreur', error)
+    }
+}
+
+async function getAbility(){
+    try{
+        const response = await fetch(api)
+        if (!response.ok) {
+            throw new Error('Erreur HTTP' + response.status)
+        }
+        const data = await response.json()
+        console.log(data)
+        return upperCasePremiereLettre(data.abilities[0].ability.name)
     }catch(error){
         console.error('Erreur', error)
     }

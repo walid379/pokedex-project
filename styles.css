@@ -10,6 +10,23 @@ body {
     justify-content: center;
 }
 
+.data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.data img{
+    border: 3px solid black;
+    border-radius: 15px;
+    background-color: aliceblue;
+    padding: 30px;
+    width: 15%;
+    height: auto;
+}
+
 .data p{
     background-color: lightblue;
     color: black;
@@ -33,32 +50,52 @@ body {
 }
 
 .popup-content {
+    display: flex;
+    flex-direction: column;  
+    align-items: center;
+    justify-content: center;
     background: white;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    width: 300px;
+    width: 350px; /* Augmente la largeur si besoin */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .popup-content p{
     color: black;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 170%;
+    font-size: 120%;
 }
 
-.popup-img{
+.sprites_default_popup{
     border: 3px solid black;
     border-radius: 15px;
     background-color: aliceblue;
-    padding: 30px;
-    width: 60%;
+    padding: 10px;
+    width: 70%;
+    height: auto;
+}
+
+.sprites_shiny_popup{
+    border: 3px solid black;
+    border-radius: 15px;
+    background-color: aliceblue;
+    padding: 10px;
+    width: 70%;
     height: auto;
 }
 
 .popup-type{
-    width: 20%;
-    height: auto;
+    display: flex;          
+    gap: 10px;          
+    justify-content: center;    
+    align-items: center;
+}
+
+.popup-type img{
+    width: 50px;        
+    height: auto; 
 }
 
 #close {
@@ -66,22 +103,4 @@ body {
     font-size: 20px;
     font-weight: bold;
     float: right;
-}
-
-.data img{
-    border: 3px solid black;
-    border-radius: 15px;
-    background-color: aliceblue;
-    padding: 30px;
-    width: 15%;
-    height: auto;
-}
-
-.data {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
 }
