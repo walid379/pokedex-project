@@ -32,6 +32,10 @@ button.addEventListener("click", async function(){
 
         const hauteur = await getHeight()
         taille.textContent = hauteur*10 + " cm"
+
+        const type = await getType()
+        types.src = type
+        document.body.setAttribute("src", types)
     }
 })
 
@@ -108,7 +112,9 @@ async function getType(){
             throw new Error('Erreur HTTP' + response.status)
         }
         const data = await response.json()
-        return data.types.map(typeInfo => typeInfo.type.name)
+        const firstType = data.types[0].type.name;
+        const iconPath = `./src/types/${firstType}.png`
+        return iconPath
     }catch(error){
         console.error('Erreur', error)
     }
