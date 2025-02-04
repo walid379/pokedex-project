@@ -1,22 +1,37 @@
 const button = document.getElementById("button")
 const input = document.getElementById("input")
+
 const nom = document.getElementById("nom")
-const sprite_front_default = document.getElementById("img")
 const nom2 = document.getElementById("nom2")
+
+const sprite_front_default = document.getElementById("img")
 const sprite_front_popup_default = document.getElementById("img_popup1")
 const sprite_back_popup_default = document.getElementById("img_popup2")
 const sprite_front_popup_shiny = document.getElementById("img_popup3")
 const sprite_back_popup_shiny = document.getElementById("img_popup4")
-const popup = document.getElementById("popup")
-const close = document.getElementById("close")
+
 const talent = document.getElementById("talent")
 const poids = document.getElementById("poids")
 const taille = document.getElementById("taille")
+
 const types1 = document.getElementById("type1")
 const types2 = document.getElementById("type2")
+
+const popup = document.getElementById("popup")
+const close = document.getElementById("close")
+
+let history = JSON.parse(localStorage.getItem("items")) || []
 let api
 
+
+window.addEventListener("load", async function() {
+    const randomId = Math.floor(Math.random() * 1025) + 1
+    api = "https://pokeapi.co/api/v2/pokemon/" + randomId
+    await fetchAndDisplayPokemon()
+})
+
 button.addEventListener("click", async function(){
+    localStorage.setItem("items", JSON.stringify(history))
     const valeur = input.value
     input.value = ""
     api = "https://pokeapi.co/api/v2/pokemon/" + valeur
@@ -54,8 +69,7 @@ button.addEventListener("click", async function(){
         taille.textContent = hauteur*10 + " cm"
 
         const ability = await getAbility()
-        console.log(ability)
-        talent.textContent = ability
+        talent.textContent = "Ability : " + ability
 
         const type1 = await getType1()
         types1.src = type1
@@ -187,7 +201,6 @@ async function getType1(){
         }
         const data = await response.json()
         const firstType = data.types[0].type.name
-        console.log(firstType)
         const iconPath = `./src/types/${firstType}.png`
         return iconPath
     }catch(error){
@@ -205,7 +218,6 @@ async function getType2(){
 
         if (data.types.length > 1) {
             const secondType = data.types[1].type.name
-            console.log(secondType)
             return `./src/types/${secondType}.png`
         }else{
             return null
@@ -222,10 +234,42 @@ async function getAbility(){
             throw new Error('Erreur HTTP' + response.status)
         }
         const data = await response.json()
-        console.log(data)
         return upperCasePremiereLettre(data.abilities[0].ability.name)
     }catch(error){
         console.error('Erreur', error)
+    }
+}
+
+async function fetchAndDisplayPokemon() {
+    const poke = await getName()
+    if (!poke) return
+
+    nom.textContent = poke
+    nom2.textContent = poke
+
+    sprite_front_default.src = await getFrontSpriteDefault()
+    sprite_front_popup_default.src = sprite_front_default.src
+    sprite_back_popup_default.src = await getBackSpriteDefault()
+    sprite_front_popup_shiny.src = await getFrontSpriteShiny()
+    sprite_back_popup_shiny.src = await getBackSpriteShiny()
+
+    poids.textContent = (await getWeight()) / 10 + " kg"
+    taille.textContent = (await getHeight()) * 10 + " cm"
+    talent.textContent = "Ability : " + await getAbility()
+
+    const type1 = await getType1()
+    types1.src = type1
+    document.body.setAttribute("src", types1)
+
+    const type2 = await getType2()
+    if(type2){
+        types2.src = type2
+        document.body.setAttribute("src", types2)
+        types2.style.display = "block"
+    }
+    else{
+        types2.src = ""
+        types2.style.display = "none"
     }
 }
 
