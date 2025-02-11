@@ -117,7 +117,6 @@ function showPopup(index) {
 
 window.addEventListener("load", async function() {
     await generatePokemon()
-    console.log(pokemons)
 })
 
 button.addEventListener("click", async function(){
@@ -138,6 +137,8 @@ button.addEventListener("click", async function(){
         type1: data.type1,
         type2: data.type2
     }
+    sprites[0].src = data.sprite_front_default
+    noms[0].textContent = data.name
 })
 
 sprite0.addEventListener("click", function(){
