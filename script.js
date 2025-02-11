@@ -1,14 +1,30 @@
 const button = document.getElementById("button")
 const input = document.getElementById("input")
 
-const nom = document.getElementById("nom")
-const nom2 = document.getElementById("nom2")
+let nom0 = document.getElementById("nom0")
+const nom_popup = document.getElementById("nom_popup")
 
-const sprite_front_default = document.getElementById("img")
-const sprite_front_popup_default = document.getElementById("img_popup1")
-const sprite_back_popup_default = document.getElementById("img_popup2")
-const sprite_front_popup_shiny = document.getElementById("img_popup3")
-const sprite_back_popup_shiny = document.getElementById("img_popup4")
+let nom1 = document.getElementById("nom1")
+let nom2 = document.getElementById("nom2")
+let nom3 = document.getElementById("nom3")
+let nom4 = document.getElementById("nom4")
+let nom5 = document.getElementById("nom5")
+
+let noms = [nom0, nom1, nom2, nom3, nom4, nom5]
+
+let sprite0 = document.getElementById("img0")
+let sprite1 = document.getElementById("img1")
+let sprite2 = document.getElementById("img2")
+let sprite3 = document.getElementById("img3")
+let sprite4 = document.getElementById("img4")
+let sprite5 = document.getElementById("img5")
+
+let sprites = [sprite0, sprite1, sprite2, sprite3, sprite4, sprite5]
+
+const sprite_frontd = document.getElementById("img_popup1")
+const sprite_backd = document.getElementById("img_popup2")
+const sprite_fronts = document.getElementById("img_popup3")
+const sprite_backs = document.getElementById("img_popup4")
 
 const talent = document.getElementById("talent")
 const poids = document.getElementById("poids")
@@ -17,78 +33,134 @@ const taille = document.getElementById("taille")
 const types1 = document.getElementById("type1")
 const types2 = document.getElementById("type2")
 
-const popup = document.getElementById("popup")
+const popup = document.getElementById("popup0")
 const close = document.getElementById("close")
 
-let history = JSON.parse(localStorage.getItem("items")) || []
-let api
+const pokemons = new Map()
 
+async function getPokemon(id) {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+    const data = await response.json()
+    firstType = data.types[0].type.name
+    iconPath1 = `./src/types/${firstType}.png`
+    if (data.types.length > 1) {
+        const secondType = data.types[1].type.name
+        iconPath2 = `./src/types/${secondType}.png`
+        types2.style.display = "block"
+    }else{
+        types2.style.display = "none"
+        iconPath2 = ""
+    }
+    const pokemon = {
+        name: upperCasePremiereLettre(data.name),
+        sprite_front_default: data.sprites.front_default,
+        sprite_back_default: data.sprites.back_default,
+        sprite_front_shiny: data.sprites.front_shiny,
+        sprite_back_shiny: data.sprites.back_shiny,
+        weight: data.weight,
+        height: data.height,
+        type1: iconPath1,
+        type2: iconPath2,
+        ability: upperCasePremiereLettre(data.abilities[0].ability.name)
+    }
+    pokemons.set(id, pokemon)
+    return pokemon
+}
+
+async function generatePokemon() {
+    for (let i = 0; i < 6; i++) {
+        const randomId = Math.floor(Math.random() * 1025) + 1
+        const data = await getPokemon(randomId)
+
+        // Stocker les données dans un tableau
+        pokemons[i] = {
+            name: data.name,
+            sprite: data.sprite_front_default,
+            spriteFront: data.sprite_front_default,
+            spriteBack: data.sprite_back_default,
+            spriteFrontShiny: data.sprite_front_shiny,
+            spriteBackShiny: data.sprite_back_shiny,
+            weight: data.weight / 10 + " kg",
+            height: data.height * 10 + " cm",
+            ability: "Ability : " + data.ability,
+            type1: data.type1,
+            type2: data.type2
+        }
+
+        // Modifier l'affichage de la liste
+        sprites[i].src = data.sprite_front_default
+        noms[i].textContent = data.name
+
+        // Ajouter un event listener sur chaque Pokémon
+        sprites[i].addEventListener("click", () => showPopup(i))
+    }
+}
+
+function showPopup(index) {
+    const data = pokemons[index] // Récupère les données du Pokémon cliqué
+
+    // Modifier le contenu du popup avec les bonnes infos
+    nom_popup.textContent = data.name
+    sprite_frontd.src = data.spriteFront
+    sprite_backd.src = data.spriteBack
+    sprite_fronts.src = data.spriteFrontShiny
+    sprite_backs.src = data.spriteBackShiny
+    poids.textContent = data.weight
+    taille.textContent = data.height
+    talent.textContent = data.ability
+    types1.src = data.type1
+    types2.src = data.type2
+
+    // Afficher le popup
+    popup.classList.remove("hidden")
+}
 
 window.addEventListener("load", async function() {
-    const randomId = Math.floor(Math.random() * 1025) + 1
-    api = "https://pokeapi.co/api/v2/pokemon/" + randomId
-    await fetchAndDisplayPokemon()
+    await generatePokemon()
+    console.log(pokemons)
 })
 
 button.addEventListener("click", async function(){
-    localStorage.setItem("items", JSON.stringify(history))
     const valeur = input.value
     input.value = ""
-    api = "https://pokeapi.co/api/v2/pokemon/" + valeur
-    const poke = await getName()
-    if (!poke) {
-        alert("Ce nom n'est pas valide")
-    }else{
-        nom.textContent = poke
-        nom2.textContent = poke
+    data = await getPokemon(valeur)
 
-        const sprite_front = await getFrontSpriteDefault()
-        sprite_front_default.src = sprite_front
-        document.body.setAttribute("src", sprite_front_default)
-        
-        sprite_front_popup_default.src = sprite_front
-        document.body.setAttribute("src", sprite_front_popup_default)
-
-        const back_sprite_default = await getBackSpriteDefault()
-        sprite_back_popup_default.src = back_sprite_default
-        document.body.setAttribute("src", sprite_back_popup_default)
-
-        const front_sprite_shiny = await getFrontSpriteShiny()
-        sprite_front_popup_shiny.src = front_sprite_shiny
-        document.body.setAttribute("src", sprite_front_popup_shiny)
-
-        const back_sprite_shiny = await getBackSpriteShiny()
-        sprite_back_popup_shiny.src = back_sprite_shiny
-        document.body.setAttribute("src", sprite_back_popup_shiny)
-
-
-        const poid = await getWeight()
-        poids.textContent = poid/10 + " kg"
-
-        const hauteur = await getHeight()
-        taille.textContent = hauteur*10 + " cm"
-
-        const ability = await getAbility()
-        talent.textContent = "Ability : " + ability
-
-        const type1 = await getType1()
-        types1.src = type1
-        document.body.setAttribute("src", types1)
-
-        const type2 = await getType2()
-        if(type2){
-            types2.src = type2
-            document.body.setAttribute("src", types2)
-            types2.style.display = "block"
-        }
-        else{
-            types2.src = ""
-            types2.style.display = "none"
-        }
+    pokemons[0] = {
+        name: data.name,
+        sprite: data.sprite_front_default,
+        spriteFront: data.sprite_front_default,
+        spriteBack: data.sprite_back_default,
+        spriteFrontShiny: data.sprite_front_shiny,
+        spriteBackShiny: data.sprite_back_shiny,
+        weight: data.weight / 10 + " kg",
+        height: data.height * 10 + " cm",
+        ability: "Ability : " + data.ability,
+        type1: data.type1,
+        type2: data.type2
     }
 })
 
-sprite_front_default.addEventListener("click", function(){
+sprite0.addEventListener("click", function(){
+    popup.style.display = "flex"
+})
+
+sprite1.addEventListener("click", function(){
+    popup.style.display = "flex"
+})
+
+sprite2.addEventListener("click", function(){
+    popup.style.display = "flex"
+})
+
+sprite3.addEventListener("click", function(){
+    popup.style.display = "flex"
+})
+
+sprite4.addEventListener("click", function(){
+    popup.style.display = "flex"
+})
+
+sprite5.addEventListener("click", function(){
     popup.style.display = "flex"
 })
 
@@ -101,177 +173,6 @@ window.addEventListener("click", function(e){
         popup.style.display = "none"
     }
 })
-
-async function getName(){
-    try{
-        const response = await fetch(api)
-        if (!response.ok) {
-            throw new Error('Erreur HTTP' + response.status)
-        }
-        const data = await response.json()
-        return upperCasePremiereLettre(data.name)
-    }catch(error){
-        console.error('Erreur', error)
-    }
-}
-
-async function getFrontSpriteDefault(){
-    try{
-        const response = await fetch(api)
-        if (!response.ok) {
-            throw new Error('Erreur HTTP' + response.status)
-        }
-        const data = await response.json()
-        return data.sprites.front_default
-    }catch(error){
-        console.error('Erreur', error)
-    }
-}
-
-async function getBackSpriteDefault(){
-    try{
-        const response = await fetch(api)
-        if (!response.ok) {
-            throw new Error('Erreur HTTP' + response.status)
-        }
-        const data = await response.json()
-        return data.sprites.back_default
-    }catch(error){
-        console.error('Erreur', error)
-    }
-}
-
-async function getFrontSpriteShiny(){
-    try{
-        const response = await fetch(api)
-        if (!response.ok) {
-            throw new Error('Erreur HTTP' + response.status)
-        }
-        const data = await response.json()
-        return data.sprites.front_shiny
-    }catch(error){
-        console.error('Erreur', error)
-    }
-}
-
-async function getBackSpriteShiny(){
-    try{
-        const response = await fetch(api)
-        if (!response.ok) {
-            throw new Error('Erreur HTTP' + response.status)
-        }
-        const data = await response.json()
-        return data.sprites.back_shiny
-    }catch(error){
-        console.error('Erreur', error)
-    }
-}
-
-async function getWeight(){
-    try{
-        const response = await fetch(api)
-        if (!response.ok) {
-            throw new Error('Erreur HTTP' + response.status)
-        }
-        const data = await response.json()
-        return data.weight
-    }catch(error){
-        console.error('Erreur', error)
-    }
-}
-
-async function getHeight(){
-    try{
-        const response = await fetch(api)
-        if (!response.ok) {
-            throw new Error('Erreur HTTP' + response.status)
-        }
-        const data = await response.json()
-        return data.height
-    }catch(error){
-        console.error('Erreur', error)
-    }
-}
-
-async function getType1(){
-    try{
-        const response = await fetch(api)
-        if (!response.ok) {
-            throw new Error('Erreur HTTP' + response.status)
-        }
-        const data = await response.json()
-        const firstType = data.types[0].type.name
-        const iconPath = `./src/types/${firstType}.png`
-        return iconPath
-    }catch(error){
-        console.error('Erreur', error)
-    }
-}
-
-async function getType2(){
-    try{
-        const response = await fetch(api)
-        if (!response.ok) {
-            throw new Error('Erreur HTTP' + response.status)
-        }
-        const data = await response.json()
-
-        if (data.types.length > 1) {
-            const secondType = data.types[1].type.name
-            return `./src/types/${secondType}.png`
-        }else{
-            return null
-        }
-    }catch(error){
-        console.error('Erreur', error)
-    }
-}
-
-async function getAbility(){
-    try{
-        const response = await fetch(api)
-        if (!response.ok) {
-            throw new Error('Erreur HTTP' + response.status)
-        }
-        const data = await response.json()
-        return upperCasePremiereLettre(data.abilities[0].ability.name)
-    }catch(error){
-        console.error('Erreur', error)
-    }
-}
-
-async function fetchAndDisplayPokemon() {
-    const poke = await getName()
-    if (!poke) return
-
-    nom.textContent = poke
-    nom2.textContent = poke
-
-    sprite_front_default.src = await getFrontSpriteDefault()
-    sprite_front_popup_default.src = sprite_front_default.src
-    sprite_back_popup_default.src = await getBackSpriteDefault()
-    sprite_front_popup_shiny.src = await getFrontSpriteShiny()
-    sprite_back_popup_shiny.src = await getBackSpriteShiny()
-
-    poids.textContent = (await getWeight()) / 10 + " kg"
-    taille.textContent = (await getHeight()) * 10 + " cm"
-    talent.textContent = "Ability : " + await getAbility()
-
-    const type1 = await getType1()
-    types1.src = type1
-    document.body.setAttribute("src", types1)
-
-    const type2 = await getType2()
-    if(type2){
-        types2.src = type2
-        document.body.setAttribute("src", types2)
-        types2.style.display = "block"
-    }
-    else{
-        types2.src = ""
-        types2.style.display = "none"
-    }
-}
 
 function upperCasePremiereLettre(str) {
     return str.charAt(0).toUpperCase() + str.slice(1)

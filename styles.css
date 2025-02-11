@@ -2,6 +2,26 @@ body {
     background-image: url('src/pokedex_bg.png');
     background-size: cover;
     background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+
+#input {
+    width: auto;
+    height: auto;
+    padding: 10px;
+    border-radius: 20px; 
+    background-image: url('src/search_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    font-size: 16px;
+    border: 2px solid #000;
+}
+
+#input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .form{
@@ -34,11 +54,49 @@ body {
     border-radius: 15px;
     padding: 10px; 
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 400%;
+    width: auto;
+    height: auto;
+}
+
+.data_random_container{
+    width: auto;
+    height: auto;
+    display: flex;
+    justify-content: center;
+
+}
+
+.data_random {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+}
+
+.data_random img {
+    border: 3px solid black;
+    border-radius: 15px;
+    background-color: aliceblue;
+    padding: 10px;
+    width: 50%;
+    height: auto;
+}
+
+.data_random p {
+    background-color: white;
+    color: black;
+    border: 3px solid black;
+    border-radius: 15px;
+    padding: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    width: auto;
+    height: auto;
 }
 
 .popup {
-    display: none; /* Caché par défaut */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -58,7 +116,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    width: 350px; /* Augmente la largeur si besoin */
+    width: 350px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
