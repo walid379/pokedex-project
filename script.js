@@ -43,7 +43,7 @@ async function getPokemon(id) {
     const data = await response.json()
     firstType = data.types[0].type.name
     iconPath1 = `./src/types/${firstType}.png`
-    if (data.types.length > 1) {
+    if (data.types.length != 1) {
         const secondType = data.types[1].type.name
         iconPath2 = `./src/types/${secondType}.png`
         types2.style.display = "block"
