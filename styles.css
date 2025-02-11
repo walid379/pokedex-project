@@ -78,14 +78,14 @@ body {
 .data_random img {
     border: 3px solid black;
     border-radius: 15px;
-    background-color: aliceblue;
+    background-color: lightblue;
     padding: 10px;
     width: 50%;
     height: auto;
 }
 
 .data_random p {
-    background-color: white;
+    background-color: lightblue;
     color: black;
     border: 3px solid black;
     border-radius: 15px;
