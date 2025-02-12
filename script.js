@@ -41,15 +41,13 @@ const pokemons = new Map()
 async function getPokemon(id) {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
     const data = await response.json()
-    firstType = data.types[0].type.name
+    const firstType = data.types[0].type.name
     iconPath1 = `./src/types/${firstType}.png`
-    if (data.types.length != 1) {
+    if (data.types.length > 1) {
         const secondType = data.types[1].type.name
         iconPath2 = `./src/types/${secondType}.png`
-        types2.style.display = "block"
     }else{
         iconPath2 = ""
-        types2.style.display = "none"
     }
     const pokemon = {
         name: upperCasePremiereLettre(data.name),
@@ -59,9 +57,9 @@ async function getPokemon(id) {
         sprite_back_shiny: data.sprites.back_shiny,
         weight: data.weight,
         height: data.height,
+        ability: upperCasePremiereLettre(data.abilities[0].ability.name),
         type1: iconPath1,
         type2: iconPath2,
-        ability: upperCasePremiereLettre(data.abilities[0].ability.name)
     }
     pokemons.set(id, pokemon)
     return pokemon
@@ -109,9 +107,6 @@ function showPopup(index) {
     talent.textContent = data.ability
     types1.src = data.type1
     types2.src = data.type2
-    console.log("Type2 src attribué :", data.type2)
-    types2.onload = () => console.log("L'image Type2 est bien chargée !")
-    types2.onerror = () => console.log("Erreur de chargement de Type2 :", data.type2)
 
     // Afficher le popup
     popup.classList.remove("hidden")
@@ -143,28 +138,17 @@ button.addEventListener("click", async function(){
     noms[0].textContent = data.name
 })
 
-sprite0.addEventListener("click", function(){
-    popup.style.display = "flex"
-})
-
-sprite1.addEventListener("click", function(){
-    popup.style.display = "flex"
-})
-
-sprite2.addEventListener("click", function(){
-    popup.style.display = "flex"
-})
-
-sprite3.addEventListener("click", function(){
-    popup.style.display = "flex"
-})
-
-sprite4.addEventListener("click", function(){
-    popup.style.display = "flex"
-})
-
-sprite5.addEventListener("click", function(){
-    popup.style.display = "flex"
+sprites.forEach(function(sprite, index){
+    sprite.addEventListener("click", function(){
+        popup.style.display = "flex"
+        const data = pokemons[index]
+        if(data.type2 === ""){
+            type2.style.display = "none"
+        }
+        else{
+            type2.style.display = "block"
+        }
+    })
 })
 
 close.addEventListener("click", function(){
