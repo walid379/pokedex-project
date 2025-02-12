@@ -48,8 +48,8 @@ async function getPokemon(id) {
         iconPath2 = `./src/types/${secondType}.png`
         types2.style.display = "block"
     }else{
-        types2.style.display = "none"
         iconPath2 = ""
+        types2.style.display = "none"
     }
     const pokemon = {
         name: upperCasePremiereLettre(data.name),
@@ -86,7 +86,6 @@ async function generatePokemon() {
             type1: data.type1,
             type2: data.type2
         }
-
         // Modifier l'affichage de la liste
         sprites[i].src = data.sprite_front_default
         noms[i].textContent = data.name
@@ -110,6 +109,9 @@ function showPopup(index) {
     talent.textContent = data.ability
     types1.src = data.type1
     types2.src = data.type2
+    console.log("Type2 src attribué :", data.type2)
+    types2.onload = () => console.log("L'image Type2 est bien chargée !")
+    types2.onerror = () => console.log("Erreur de chargement de Type2 :", data.type2)
 
     // Afficher le popup
     popup.classList.remove("hidden")
