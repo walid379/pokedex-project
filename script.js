@@ -38,6 +38,8 @@ const sprite_backs = document.getElementById("img_popup4")
 const talent = document.getElementById("talent")
 const poids = document.getElementById("poids")
 const taille = document.getElementById("taille")
+const cri = document.getElementById("cris")
+const cri_control = document.getElementById("control")
 
 const types1 = document.getElementById("type1")
 const types2 = document.getElementById("type2")
@@ -59,6 +61,7 @@ async function getPokemon(id) {
         console.log(data)
         const firstType = data.types[0].type.name
         iconPath1 = `./src/types/${firstType}.png`
+        screamPath = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${data.id}.ogg`
         if (data.types.length > 1) {
             const secondType = data.types[1].type.name
             iconPath2 = `./src/types/${secondType}.png`
@@ -73,6 +76,7 @@ async function getPokemon(id) {
             sprite_back_shiny: data.sprites.back_shiny,
             weight: data.weight,
             height: data.height,
+            scream: screamPath,
             ability: upperCasePremiereLettre(data.abilities[0].ability.name),
             type1: iconPath1,
             type2: iconPath2,
@@ -97,6 +101,7 @@ async function generateMainPokemon(value) {
         spriteBackShiny: data.sprite_back_shiny,
         weight: data.weight / 10 + " kg",
         height: data.height * 10 + " cm",
+        scream: screamPath,
         ability: "Ability : " + data.ability,
         type1: data.type1,
         type2: data.type2
@@ -120,6 +125,7 @@ async function generatePokemon() {
             spriteBackShiny: data.sprite_back_shiny,
             weight: data.weight / 10 + " kg",
             height: data.height * 10 + " cm",
+            scream: screamPath,
             ability: "Ability : " + data.ability,
             type1: data.type1,
             type2: data.type2
@@ -136,6 +142,10 @@ async function generatePokemon() {
 function showPopup(index) {
     const data = pokemons[index] // Récupère les données du Pokémon cliqué
 
+    console.log(data)
+    console.log(data.scream)
+    console.log(cri)
+    
     // Modifier le contenu du popup avec les bonnes infos
     nom_popup.textContent = data.name
     sprite_frontd.src = data.spriteFront
@@ -144,6 +154,8 @@ function showPopup(index) {
     sprite_backs.src = data.spriteBackShiny
     poids.textContent = data.weight
     taille.textContent = data.height
+    cri.src = data.scream
+    cri_control.load()
     talent.textContent = data.ability
     types1.src = data.type1
     types2.src = data.type2
