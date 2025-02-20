@@ -58,7 +58,6 @@ async function getPokemon(id) {
             alert('Pokémon introuvable')
         }
         const data = await response.json()
-        console.log(data)
         const firstType = data.types[0].type.name
         iconPath1 = `./src/types/${firstType}.png`
         screamPath = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${data.id}.ogg`
@@ -115,7 +114,6 @@ async function generatePokemon() {
         const randomId = Math.floor(Math.random() * 1025) + 1
         const data = await getPokemon(randomId)
 
-        // Stocker les données dans un tableau
         pokemons[i] = {
             name: data.name,
             sprite: data.sprite_front_default,
@@ -130,23 +128,17 @@ async function generatePokemon() {
             type1: data.type1,
             type2: data.type2
         }
-        // Modifier l'affichage de la liste
+        
         sprites[i].src = data.sprite_front_default
         noms[i].textContent = data.name
 
-        // Ajouter un event listener sur chaque Pokémon
         sprites[i].addEventListener("click", () => showPopup(i))
     }
 }
 
 function showPopup(index) {
-    const data = pokemons[index] // Récupère les données du Pokémon cliqué
-
-    console.log(data)
-    console.log(data.scream)
-    console.log(cri)
+    const data = pokemons[index] 
     
-    // Modifier le contenu du popup avec les bonnes infos
     nom_popup.textContent = data.name
     sprite_frontd.src = data.spriteFront
     sprite_backd.src = data.spriteBack
@@ -160,7 +152,6 @@ function showPopup(index) {
     types1.src = data.type1
     types2.src = data.type2
 
-    // Afficher le popup
     popup.classList.remove("hidden")
 }
 
