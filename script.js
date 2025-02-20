@@ -12,6 +12,15 @@ let nom5 = document.getElementById("nom5")
 
 let noms = [nom0, nom1, nom2, nom3, nom4, nom5]
 
+let histo0 = document.getElementById("histo0")
+let histo1 = document.getElementById("histo1")
+let histo2 = document.getElementById("histo2")
+let histo3 = document.getElementById("histo3")
+let histo4 = document.getElementById("histo4")
+let histo5 = document.getElementById("histo5")
+
+let histos = [histo1, histo2, histo3, histo4, histo5]
+
 let sprite0 = document.getElementById("img0")
 let sprite1 = document.getElementById("img1")
 let sprite2 = document.getElementById("img2")
@@ -33,36 +42,68 @@ const taille = document.getElementById("taille")
 const types1 = document.getElementById("type1")
 const types2 = document.getElementById("type2")
 
-const popup = document.getElementById("popup0")
+const popup = document.getElementById("popup")
 const close = document.getElementById("close")
+
+let historique = []
 
 const pokemons = new Map()
 
 async function getPokemon(id) {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
-    const data = await response.json()
-    const firstType = data.types[0].type.name
-    iconPath1 = `./src/types/${firstType}.png`
-    if (data.types.length > 1) {
-        const secondType = data.types[1].type.name
-        iconPath2 = `./src/types/${secondType}.png`
-    }else{
-        iconPath2 = ""
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+
+        if (!response.ok) {
+            alert('Pokémon introuvable')
+        }
+
+        const data = await response.json();
+        const firstType = data.types[0].type.name
+        iconPath1 = `./src/types/${firstType}.png`
+        if (data.types.length > 1) {
+            const secondType = data.types[1].type.name
+            iconPath2 = `./src/types/${secondType}.png`
+        }else{
+            iconPath2 = ""
+        }
+        const pokemon = {
+            name: upperCasePremiereLettre(data.name),
+            sprite_front_default: data.sprites.front_default,
+            sprite_back_default: data.sprites.back_default,
+            sprite_front_shiny: data.sprites.front_shiny,
+            sprite_back_shiny: data.sprites.back_shiny,
+            weight: data.weight,
+            height: data.height,
+            ability: upperCasePremiereLettre(data.abilities[0].ability.name),
+            type1: iconPath1,
+            type2: iconPath2,
+        }
+        pokemons.set(id, pokemon)
+        return pokemon
+    } catch (error) {
+        console.error("Erreur lors de la récupération du Pokémon :", error.message);
+        return null; // Permet de gérer proprement l'erreur
     }
-    const pokemon = {
-        name: upperCasePremiereLettre(data.name),
-        sprite_front_default: data.sprites.front_default,
-        sprite_back_default: data.sprites.back_default,
-        sprite_front_shiny: data.sprites.front_shiny,
-        sprite_back_shiny: data.sprites.back_shiny,
-        weight: data.weight,
-        height: data.height,
-        ability: upperCasePremiereLettre(data.abilities[0].ability.name),
-        type1: iconPath1,
-        type2: iconPath2,
+}
+
+async function generateMainPokemon(value) {
+    data = await getPokemon(value)
+
+    pokemons[0] = {
+        name: data.name,
+        sprite: data.sprite_front_default,
+        spriteFront: data.sprite_front_default,
+        spriteBack: data.sprite_back_default,
+        spriteFrontShiny: data.sprite_front_shiny,
+        spriteBackShiny: data.sprite_back_shiny,
+        weight: data.weight / 10 + " kg",
+        height: data.height * 10 + " cm",
+        ability: "Ability : " + data.ability,
+        type1: data.type1,
+        type2: data.type2
     }
-    pokemons.set(id, pokemon)
-    return pokemon
+    sprites[0].src = data.sprite_front_default
+    noms[0].textContent = data.name
 }
 
 async function generatePokemon() {
@@ -119,29 +160,14 @@ window.addEventListener("load", async function() {
 button.addEventListener("click", async function(){
     const valeur = input.value
     input.value = ""
-    data = await getPokemon(valeur)
-
-    pokemons[0] = {
-        name: data.name,
-        sprite: data.sprite_front_default,
-        spriteFront: data.sprite_front_default,
-        spriteBack: data.sprite_back_default,
-        spriteFrontShiny: data.sprite_front_shiny,
-        spriteBackShiny: data.sprite_back_shiny,
-        weight: data.weight / 10 + " kg",
-        height: data.height * 10 + " cm",
-        ability: "Ability : " + data.ability,
-        type1: data.type1,
-        type2: data.type2
-    }
-    sprites[0].src = data.sprite_front_default
-    noms[0].textContent = data.name
+    generateMainPokemon(valeur)
 })
 
 sprites.forEach(function(sprite, index){
     sprite.addEventListener("click", function(){
         popup.style.display = "flex"
         const data = pokemons[index]
+        ajouterNomHistorique(data.name)
         if(data.type2 === ""){
             type2.style.display = "none"
         }
@@ -150,6 +176,31 @@ sprites.forEach(function(sprite, index){
         }
     })
 })
+
+histos.forEach(function(histo, index){
+    histo.addEventListener("click", function(){
+        const data = historique[index]
+        generateMainPokemon(data)
+    })
+})
+
+function ajouterNomHistorique(nom){
+    if (!historique.includes(nom)) {
+        if(historique.length >= 5){
+            historique.shift()
+        }
+        historique.push(nom)
+        histo0.style.display = "none" // Cache le message par défaut
+        for (let i = 0; i < histos.length; i++) {
+            if (historique[i]) {
+                histos[i].textContent = historique[i]
+                histos[i].style.display = "block"
+            } else {
+                histos[i].style.display = "none"
+            }
+        }
+    }
+}
 
 close.addEventListener("click", function(){
     popup.style.display = "none"

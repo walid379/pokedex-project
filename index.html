@@ -9,9 +9,21 @@
 </head>
 <body>
     <div class="form">
-        <input id="input" type="text" placeholder="Entrez le nom du Pokémon">
-        <button id="button">Chercher</button>
+        <input id="input" type="text" placeholder="Enter your Pokémon name">
+        <button id="button">Finder</button>
     </div>
+    <p class="titre">History :</p>
+    <div class="historique">
+        <p id="histo0" style="display: block;">No recent Pokémon.</p>
+        <p id="histo1" style="display: none;"></p>
+        <p id="histo2" style="display: none;"></p>
+        <p id="histo3" style="display: none;"></p>
+    </div>
+    <div class="historique">
+        <p id="histo4" style="display: none;"></p>
+        <p id="histo5" style="display: none;"></p>
+    </div>
+    <p class="titre">Your Pokémon :</p>
     <div class="data">
         <p id="nom0"></p>
         <img id="img0" src="">
@@ -41,7 +53,7 @@
             <img id="img5" src="">
         </div>
     </div>
-    <div id="popup0" class="popup">
+    <div id="popup" class="popup">
         <div class="popup-content">
             <span id="close">❌</span>
             <div class="sprites_default_popup">
