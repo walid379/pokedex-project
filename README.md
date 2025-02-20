@@ -32,8 +32,6 @@ Affichage des statistiques des Pokémon.
 
 Intégration de filtres par type.
 
-📜 Licence
-
 Ce projet est open-source.
 
 Développé avec ❤️ par Walid379.
