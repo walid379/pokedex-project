@@ -52,12 +52,11 @@ const pokemons = new Map()
 async function getPokemon(id) {
     try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
-
         if (!response.ok) {
             alert('Pokémon introuvable')
         }
-
-        const data = await response.json();
+        const data = await response.json()
+        console.log(data)
         const firstType = data.types[0].type.name
         iconPath1 = `./src/types/${firstType}.png`
         if (data.types.length > 1) {
@@ -169,10 +168,22 @@ sprites.forEach(function(sprite, index){
         const data = pokemons[index]
         ajouterNomHistorique(data.name)
         if(data.type2 === ""){
-            type2.style.display = "none"
+            types2.style.display = "none"
         }
         else{
-            type2.style.display = "block"
+            types2.style.display = "block"
+        }
+        if (data.spriteBack != null) {
+            sprite_backd.style.display = "block"
+        }
+        else{
+            sprite_backd.style.display = "none"
+        }
+        if (data.spriteBackShiny != null) {
+            sprite_backs.style.display = "block"
+        }
+        else{
+            sprite_backs.style.display = "none"
         }
     })
 })
