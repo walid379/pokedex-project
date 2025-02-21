@@ -26,13 +26,13 @@ PokéAPI (pour récupérer les données des Pokémon)
 
 ✨ Améliorations futures
 
+Affichage des sprites normaux et shiny des Pokémon.
+
 Affichage des cris des Pokémon.
 
 Affichage des statistiques des Pokémon.
 
-Intégration de filtres par type.
-
 Ce projet est open-source.
 
-Développé avec ❤️ par Walid379.
+Développé par Walid379.
 
